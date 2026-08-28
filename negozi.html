@@ -3,414 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Negozi — Onde boas negociações acontecem</title>
+    <style>
+        /* ================================
+           CSS BASE (SEU DESIGN ORIGINAL)
+        ================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: Arial, Helvetica, sans-serif; background: #f7f8fc; color: #17172b; }
+        a { text-decoration: none; color: inherit; }
+        button, input { font-family: inherit; }
 
-    <link rel="stylesheet" href="style.css">
+        .header { width: 100%; height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 7%; background: white; border-bottom: 1px solid #eeeeF5; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 28px; font-weight: 800; color: #17172b; cursor: pointer; }
+        .logo-n { color: #7047eb; }
+        .menu { display: flex; gap: 32px; }
+        .menu a { font-size: 14px; font-weight: 600; color: #62627a; transition: 0.3s; }
+        .menu a:hover { color: #7047eb; }
+        .header-buttons { display: flex; gap: 10px; align-items: center; }
+        .btn-login, .btn-cadastro, .btn-primary { padding: 11px 20px; border-radius: 9px; cursor: pointer; font-weight: 700; border: none; }
+        .btn-login { background: transparent; color: #4e4e68; }
+        .btn-cadastro, .btn-primary { background: #7047eb; color: white; transition: 0.3s; }
+        .btn-cadastro:hover, .btn-primary:hover { background: #5931d2; }
+        
+        /* SISTEMA DE PÁGINAS (SPA) */
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
+        /* HERO & HOME */
+        .hero { min-height: 500px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; background: radial-gradient(circle at 20% 20%, rgba(112, 71, 235, 0.15), transparent 35%), radial-gradient(circle at 80% 30%, rgba(50, 120, 255, 0.13), transparent 35%), white; }
+        .hero-content { max-width: 900px; }
+        .tag { display: inline-block; margin-bottom: 15px; color: #7047eb; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; }
+        .hero h1 { font-size: clamp(35px, 6vw, 65px); line-height: 1.02; margin-bottom: 25px; font-weight: 900; }
+        .hero h1 span { color: #7047eb; }
+        .search-box { max-width: 720px; margin: auto; padding: 7px; display: flex; background: white; border: 1px solid #e1e1ec; border-radius: 14px; box-shadow: 0 15px 40px rgba(35, 31, 67, 0.10); }
+        .search-box input { flex: 1; padding: 15px 18px; border: none; outline: none; font-size: 15px; }
+        .search-box button { padding: 0 25px; border: none; border-radius: 10px; background: #7047eb; color: white; font-weight: 700; cursor: pointer; }
+
+        .section { max-width: 1200px; margin: auto; padding: 60px 25px; }
+        .section-title { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 40px; }
+        .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .product-card { overflow: hidden; background: white; border: 1px solid #e9e9f0; border-radius: 17px; transition: 0.3s; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 35px rgba(30, 25, 70, 0.12); }
+        .product-image { height: 180px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #eeeaff, #e8f2ff); font-size: 60px; }
+        .product-info { padding: 20px; }
+        .price { margin: 10px 0; font-size: 20px; font-weight: 900; }
+        .proposal-button { width: 100%; padding: 12px; border: 1px solid #7047eb; border-radius: 9px; background: white; color: #7047eb; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .proposal-button:hover { background: #7047eb; color: white; }
+
+        /* ================================
+           NOVAS SEÇÕES: AUTH & CHAT
+        ================================ */
+        .auth-container { max-width: 420px; margin: 60px auto; background: white; padding: 35px; border-radius: 20px; border: 1px solid #e1e1ec; box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+        .auth-container h2 { font-size: 26px; margin-bottom: 8px; text-align: center; }
+        .auth-container p { color: #666; font-size: 14px; text-align: center; margin-bottom: 25px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #4e4e68; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; }
+        .form-group input:focus { border-color: #7047eb; }
+        .auth-switch { text-align: center; margin-top: 20px; font-size: 13px; color: #666; }
+        .auth-switch a { color: #7047eb; font-weight: 700; cursor: pointer; }
+
+        /* PÁGINA DE NEGOCIAÇÃO (CHAT) */
+        .chat-layout { max-width: 1000px; margin: 40px auto; display: grid; grid-template-columns: 320px 1fr; background: white; border-radius: 16px; border: 1px solid #e1e1ec; height: 600px; overflow: hidden; }
+        .chat-sidebar { border-right: 1px solid #eee; background: #fafafa; padding: 20px; }
+        .chat-product-summary { text-align: center; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .chat-product-icon { font-size: 48px; margin-bottom: 10px; }
+        .chat-main { display: flex; flex-direction: column; height: 100%; }
+        .chat-header { padding: 18px; border-bottom: 1px solid #eee; font-weight: 700; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 70%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
+        .message.sent { align-self: flex-end; background: #7047eb; color: white; border-bottom-right-radius: 2px; }
+        .message.received { align-self: flex-start; background: #f0f0f5; color: #222; border-bottom-left-radius: 2px; }
+        .chat-input-area { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+
+        .footer { padding: 40px 7%; background: white; text-align: center; border-top: 1px solid #e8e8ef; margin-top: 60px; }
+    </style>
 </head>
-
 <body>
 
-    <!-- CABEÇALHO -->
     <header class="header">
-
-        <div class="logo">
+        <div class="logo" onclick="navigateTo('home')">
             <span class="logo-n">N</span>egozi
         </div>
 
         <nav class="menu">
-            <a href="#inicio">Início</a>
-            <a href="#categorias">Categorias</a>
-            <a href="#ofertas">Ofertas</a>
-            <a href="#como-funciona">Como funciona</a>
+            <a href="#" onclick="navigateTo('home')">Início</a>
+            <a href="#ofertas" onclick="navigateTo('home')">Ofertas</a>
         </nav>
 
-        <div class="header-buttons">
-            <button class="btn-login">Entrar</button>
-            <button class="btn-cadastro">Criar conta</button>
+        <div class="header-buttons" id="nav-auth-buttons">
+            <button class="btn-login" onclick="navigateTo('login')">Entrar</button>
+            <button class="btn-cadastro" onclick="navigateTo('register')">Criar conta</button>
         </div>
-
     </header>
 
-
-    <!-- HERO -->
     <main>
-
-        <section class="hero" id="inicio">
-
-            <div class="hero-content">
-
-                <span class="tag">NEGOCIE DO SEU JEITO</span>
-
-                <h1>
-                    Encontre.
-                    <span>Proponha.</span>
-                    Negocie.
-                    Feche.
-                </h1>
-
-                <p>
-                    Encontre produtos, serviços e oportunidades.
-                    Faça sua proposta e chegue ao melhor negócio.
-                </p>
-
-                <!-- BUSCA -->
-                <div class="search-box">
-
-                    <input
-                        type="text"
-                        placeholder="Buscar produtos, serviços ou oportunidades..."
-                    >
-
-                    <button>🔎 Buscar</button>
-
-                </div>
-
-                <div class="quick-categories">
-                    <span>Buscas populares:</span>
-                    <a href="#">Celulares</a>
-                    <a href="#">Carros</a>
-                    <a href="#">Computadores</a>
-                    <a href="#">Móveis</a>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- CATEGORIAS -->
-        <section class="section" id="categorias">
-
-            <div class="section-title">
-
-                <div>
-                    <span class="tag">EXPLORE</span>
-                    <h2>Encontre o que você procura</h2>
-                </div>
-
-                <a href="#" class="see-all">Ver todas →</a>
-
-            </div>
-
-
-            <div class="categories">
-
-                <div class="category-card">
-                    <div class="category-icon">📱</div>
-                    <h3>Eletrônicos</h3>
-                    <p>Celulares, computadores e muito mais</p>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-icon">🚗</div>
-                    <h3>Veículos</h3>
-                    <p>Carros, motos e veículos</p>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-icon">🏠</div>
-                    <h3>Casa</h3>
-                    <p>Móveis e produtos para sua casa</p>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-icon">👕</div>
-                    <h3>Moda</h3>
-                    <p>Roupas, calçados e acessórios</p>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-icon">🛠️</div>
-                    <h3>Serviços</h3>
-                    <p>Profissionais e serviços</p>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-icon">📦</div>
-                    <h3>Outros</h3>
-                    <p>Encontre novas oportunidades</p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- OFERTAS -->
-        <section class="section offers" id="ofertas">
-
-            <div class="section-title">
-
-                <div>
-                    <span class="tag">OPORTUNIDADES</span>
-                    <h2>Ofertas em destaque</h2>
-                </div>
-
-                <a href="#" class="see-all">Ver ofertas →</a>
-
-            </div>
-
-
-            <div class="products">
-
-                <!-- PRODUTO 1 -->
-                <article class="product-card">
-
-                    <div class="product-image">
-                        📱
-                        <span class="favorite">♡</span>
+        <div id="page-home" class="page-view active">
+            <section class="hero">
+                <div class="hero-content">
+                    <span class="tag">NEGOCIE DO SEU JEITO</span>
+                    <h1>Encontre. <span>Proponha.</span> Negocie. Feche.</h1>
+                    <div class="search-box">
+                        <input type="text" placeholder="Buscar produtos, serviços ou oportunidades...">
+                        <button>🔎 Buscar</button>
                     </div>
+                </div>
+            </section>
 
-                    <div class="product-info">
-
-                        <span class="product-category">
-                            ELETRÔNICOS
-                        </span>
-
-                        <h3>Smartphone Pro Max</h3>
-
-                        <p class="location">📍 Curitiba - PR</p>
-
-                        <div class="price">
-                            R$ 2.899,00
-                        </div>
-
-                        <button class="proposal-button">
-                            Fazer proposta
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- PRODUTO 2 -->
-                <article class="product-card">
-
-                    <div class="product-image">
-                        💻
-                        <span class="favorite">♡</span>
-                    </div>
-
-                    <div class="product-info">
-
-                        <span class="product-category">
-                            INFORMÁTICA
-                        </span>
-
-                        <h3>Notebook Gamer</h3>
-
-                        <p class="location">📍 Curitiba - PR</p>
-
-                        <div class="price">
-                            R$ 4.500,00
-                        </div>
-
-                        <button class="proposal-button">
-                            Fazer proposta
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- PRODUTO 3 -->
-                <article class="product-card">
-
-                    <div class="product-image">
-                        🎮
-                        <span class="favorite">♡</span>
-                    </div>
-
-                    <div class="product-info">
-
-                        <span class="product-category">
-                            GAMES
-                        </span>
-
-                        <h3>Console de última geração</h3>
-
-                        <p class="location">📍 Curitiba - PR</p>
-
-                        <div class="price">
-                            R$ 3.200,00
-                        </div>
-
-                        <button class="proposal-button">
-                            Fazer proposta
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- PRODUTO 4 -->
-                <article class="product-card">
-
-                    <div class="product-image">
-                        🚲
-                        <span class="favorite">♡</span>
-                    </div>
-
-                    <div class="product-info">
-
-                        <span class="product-category">
-                            ESPORTES
-                        </span>
-
-                        <h3>Bicicleta Mountain Bike</h3>
-
-                        <p class="location">📍 Curitiba - PR</p>
-
-                        <div class="price">
-                            R$ 1.850,00
-                        </div>
-
-                        <button class="proposal-button">
-                            Fazer proposta
-                        </button>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- COMO FUNCIONA -->
-        <section class="how-section" id="como-funciona">
-
-            <div class="section-title center">
-
-                <span class="tag">SIMPLES ASSIM</span>
-
-                <h2>Como o Negozi funciona?</h2>
-
-                <p>
-                    Negociar ficou mais simples, rápido e transparente.
-                </p>
-
-            </div>
-
-
-            <div class="steps">
-
-                <div class="step">
-
-                    <div class="step-number">01</div>
-
+            <section class="section" id="ofertas">
+                <div class="section-title">
                     <div>
-                        <h3>Encontre</h3>
-                        <p>
-                            Pesquise produtos, serviços e oportunidades.
-                        </p>
+                        <span class="tag">OPORTUNIDADES</span>
+                        <h2>Ofertas em destaque</h2>
                     </div>
-
                 </div>
 
+                <div class="products">
+                    <article class="product-card">
+                        <div class="product-image">📱</div>
+                        <div class="product-info">
+                            <h3>Smartphone Pro Max</h3>
+                            <div class="price">R$ 2.899,00</div>
+                            <button class="proposal-button" onclick="startNegotiation('Smartphone Pro Max', 'R$ 2.899,00', '📱')">Fazer proposta</button>
+                        </div>
+                    </article>
 
-                <div class="step">
+                    <article class="product-card">
+                        <div class="product-image">💻</div>
+                        <div class="product-info">
+                            <h3>Notebook Gamer</h3>
+                            <div class="price">R$ 4.500,00</div>
+                            <button class="proposal-button" onclick="startNegotiation('Notebook Gamer', 'R$ 4.500,00', '💻')">Fazer proposta</button>
+                        </div>
+                    </article>
 
-                    <div class="step-number">02</div>
-
-                    <div>
-                        <h3>Proponha</h3>
-                        <p>
-                            Encontrou algo interessante? Faça uma proposta.
-                        </p>
-                    </div>
-
+                    <article class="product-card">
+                        <div class="product-image">🎮</div>
+                        <div class="product-info">
+                            <h3>Console de última geração</h3>
+                            <div class="price">R$ 3.200,00</div>
+                            <button class="proposal-button" onclick="startNegotiation('Console de última geração', 'R$ 3.200,00', '🎮')">Fazer proposta</button>
+                        </div>
+                    </article>
                 </div>
+            </section>
+        </div>
 
-
-                <div class="step">
-
-                    <div class="step-number">03</div>
-
-                    <div>
-                        <h3>Negocie</h3>
-                        <p>
-                            Converse e faça contrapropostas.
-                        </p>
+        <div id="page-login" class="page-view">
+            <div class="auth-container">
+                <h2>Acesse sua conta</h2>
+                <p>Entre para gerenciar suas negociações</p>
+                <form id="form-login" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="login-email" required placeholder="seu@email.com">
                     </div>
-
-                </div>
-
-
-                <div class="step">
-
-                    <div class="step-number">04</div>
-
-                    <div>
-                        <h3>Feche</h3>
-                        <p>
-                            Chegue a um acordo e feche seu negócio.
-                        </p>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" required placeholder="••••••••">
                     </div>
-
+                    <button type="submit" class="btn-primary" style="width: 100%;">Entrar</button>
+                </form>
+                <div class="auth-switch">
+                    Ainda não tem conta? <a onclick="navigateTo('register')">Cadastre-se</a>
                 </div>
-
             </div>
+        </div>
 
-        </section>
-
-
-        <!-- CTA -->
-        <section class="cta">
-
-            <div>
-
-                <span class="tag">NEGOZI</span>
-
-                <h2>
-                    O preço pode ser apenas
-                    o começo da conversa.
-                </h2>
-
-                <p>
-                    Encontre oportunidades e negocie do seu jeito.
-                </p>
-
+        <div id="page-register" class="page-view">
+            <div class="auth-container">
+                <h2>Crie sua conta</h2>
+                <p>Comece a fazer ofertas hoje mesmo</p>
+                <form id="form-register" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="reg-name" required placeholder="Seu nome">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" id="reg-email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Criar Conta</button>
+                </form>
+                <div class="auth-switch">
+                    Já tem uma conta? <a onclick="navigateTo('login')">Fazer Login</a>
+                </div>
             </div>
+        </div>
 
-            <button class="cta-button">
-                Começar a negociar →
-            </button>
-
-        </section>
-
+        <div id="page-chat" class="page-view">
+            <div class="chat-layout">
+                <div class="chat-sidebar">
+                    <div class="chat-product-summary">
+                        <div class="chat-product-icon" id="chat-item-icon">📱</div>
+                        <h3 id="chat-item-name">Produto</h3>
+                        <p id="chat-item-price" style="font-weight: bold; color: #7047eb; margin-top: 5px;">R$ 0,00</p>
+                    </div>
+                    <div style="margin-top: 20px; font-size: 13px; color: #666;">
+                        <p><strong>Vendedor:</strong> Vendedor Verificado</p>
+                        <p style="margin-top: 5px;"><strong>Status:</strong> Negociação em andamento</p>
+                    </div>
+                </div>
+                <div class="chat-main">
+                    <div class="chat-header">
+                        Negociando com Vendedor
+                    </div>
+                    <div class="chat-messages" id="chat-messages-list">
+                        </div>
+                    <form class="chat-input-area" onsubmit="sendMessage(event)">
+                        <input type="text" id="chat-input" placeholder="Envie sua proposta ou mensagem..." required>
+                        <button type="submit" class="btn-primary">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
 
-
-    <!-- RODAPÉ -->
     <footer class="footer">
-
-        <div class="footer-logo">
-            <span>N</span>egozi
-        </div>
-
-        <p>
-            Negozi — Onde boas negociações acontecem.
-        </p>
-
-        <div class="footer-links">
-            <a href="#">Sobre</a>
-            <a href="#">Segurança</a>
-            <a href="#">Termos</a>
-            <a href="#">Privacidade</a>
-            <a href="#">Contato</a>
-        </div>
-
-        <div class="copyright">
-            © 2026 Negozi. Todos os direitos reservados.
-        </div>
-
+        <p>© 2026 Negozi — Onde boas negociações acontecem.</p>
     </footer>
 
+    <script>
+        // Estado da Aplicação
+        let currentUser = JSON.parse(localStorage.getItem('negozi_user')) || null;
+        let currentNegotiation = null;
+
+        // Inicialização
+        document.addEventListener("DOMContentLoaded", () => {
+            updateNav();
+        });
+
+        // Navegação entre páginas (SPA)
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // Atualização dos botões no Header conforme estado de Login
+        function updateNav() {
+            const authContainer = document.getElementById('nav-auth-buttons');
+            if (currentUser) {
+                authContainer.innerHTML = `
+                    <span style="font-size:14px; font-weight:600;">Olá, ${currentUser.name}</span>
+                    <button class="btn-login" onclick="handleLogout()">Sair</button>
+                `;
+            } else {
+                authContainer.innerHTML = `
+                    <button class="btn-login" onclick="navigateTo('login')">Entrar</button>
+                    <button class="btn-cadastro" onclick="navigateTo('register')">Criar conta</button>
+                `;
+            }
+        }
+
+        // Handlers de Autenticação
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            
+            currentUser = { name, email };
+            localStorage.setItem('negozi_user', JSON.stringify(currentUser));
+            
+            updateNav();
+            navigateTo('home');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const name = email.split('@')[0]; // Nome amigável derivado do e-mail
+            
+            currentUser = { name, email };
+            localStorage.setItem('negozi_user', JSON.stringify(currentUser));
+            
+            updateNav();
+            navigateTo('home');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('negozi_user');
+            updateNav();
+            navigateTo('home');
+        }
+
+        // Sistema de Negociação
+        function startNegotiation(itemName, itemPrice, itemIcon) {
+            if (!currentUser) {
+                alert("Você precisa estar logado para iniciar uma negociação.");
+                navigateTo('login');
+                return;
+            }
+
+            currentNegotiation = { itemName, itemPrice, itemIcon };
+            
+            document.getElementById('chat-item-name').innerText = itemName;
+            document.getElementById('chat-item-price').innerText = itemPrice;
+            document.getElementById('chat-item-icon').innerText = itemIcon;
+
+            // Limpa o chat e adiciona a mensagem automática inicial
+            const chatList = document.getElementById('chat-messages-list');
+            chatList.innerHTML = `
+                <div class="message received">
+                    Olá, <strong>${currentUser.name}</strong>! Vi seu interesse no produto <strong>${itemName}</strong>. Qual a sua proposta?
+                </div>
+            `;
+
+            navigateTo('chat');
+        }
+
+        function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            const chatList = document.getElementById('chat-messages-list');
+            
+            // Mensagem do Usuário
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message sent';
+            userMsg.innerText = text;
+            chatList.appendChild(userMsg);
+
+            input.value = '';
+            chatList.scrollTop = chatList.scrollHeight;
+
+            // Resposta Automática Simulado do Vendedor (após 1 segundo)
+            setTimeout(() => {
+                const vendorMsg = document.createElement('div');
+                vendorMsg.className = 'message received';
+                vendorMsg.innerText = "Obrigado pela mensagem! Analisarei sua oferta e retorno em breve.";
+                chatList.appendChild(vendorMsg);
+                chatList.scrollTop = chatList.scrollHeight;
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
